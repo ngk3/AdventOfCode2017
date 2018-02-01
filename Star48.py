@@ -64,6 +64,81 @@ def getValidPorts(node_connection, ports):
             valid_ports.add(p.copy())
     return valid_ports
 
+# What is the strength of the longest bridge you can make? 
+# If you can make multiple bridges of the longest length, pick the strongest one.    
+
+def getMaxLength(length, start, ports):
+    # Get the valid ports that connects to start and return max if no valid ports are found
+    valid_ports = getValidPorts(start, ports)
+    if len(valid_ports) == 0:
+        return length
+    new_length = length
+    
+    # Find the maximum strength bridge that connects to start
+    for vp in valid_ports:
+        copy_ports = copyPortsExcept(vp, ports)
+        vp_ports = vp.getPorts()
+        returning_length = 0
+        if vp_ports[0] == start:
+            returning_length = getMaxLength(length + 1, vp_ports[1], copy_ports)
+        else:
+            returning_length = getMaxLength(length + 1, vp_ports[0], copy_ports)
+        if returning_length > new_length:
+            new_length = returning_length
+    return new_length
+
+def findMaxLengthBridge(input_file):
+    # Get the ports and starts
+    ports = readFileAndGetPorts(input_file)
+    starts = getStarts(ports)
+    
+    # Get the maximum length bridge able to be created with each start port
+    max = 0
+    for s in starts:
+        s_max = getMaxLength(1, s, ports)
+        if s_max > max:
+            max = s_max 
+    return max   
+
+def getMaxStrengthLength(max_length, max_strength, current_length, start, ports):
+    # Get the valid ports that connects to start and return max if no valid ports are found
+    valid_ports = getValidPorts(start, ports)
+    if len(valid_ports) == 0:
+        if current_length == max_length:
+            return max_strength 
+        else:
+            return 0 
+    new_max = max_strength
+    
+     # Find the maximum strength bridge that connects to start
+    for vp in valid_ports:
+        copy_ports = copyPortsExcept(vp, ports)
+        vp_ports = vp.getPorts()
+        returning_max = 0
+        if vp_ports[0] == start:
+            returning_max = getMaxStrengthLength(max_length, max_strength + vp_ports[1] + vp_ports[0], current_length + 1, vp_ports[1], copy_ports)
+        else:
+            returning_max = getMaxStrengthLength(max_length, max_strength + vp_ports[0] + vp_ports[1], current_length + 1, vp_ports[0], copy_ports)
+        if returning_max > new_max:
+            new_max = returning_max
+    return new_max
+
+# Function that finds the maximum bridge strength given an input file of ports          
+def findMaxStrengthBridge(input_file):
+    # Get the ports and starts
+    ports = readFileAndGetPorts(input_file)
+    starts = getStarts(ports)
+    
+    max_length = findMaxLengthBridge(input_file)
+    
+    # Get the maximum strength bridge able to be created with each start port
+    max = 0
+    for s in starts:
+        s_max = getMaxStrengthLength(max_length, s, 1, s, ports)
+        if s_max > max:
+            max = s_max 
+    return max
+    
 # Recursive function used to get the max strength of a bridge given an initial start port    
 def getMaxStrength(max, start, ports):
     # Get the valid ports that connects to start and return max if no valid ports are found
@@ -99,4 +174,4 @@ def findMaxBridge(input_file):
             max = s_max 
     return max
           
-print findMaxBridge("Star47_input.txt")
+print findMaxStrengthBridge("Star47_input.txt")
