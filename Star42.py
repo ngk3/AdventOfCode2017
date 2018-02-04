@@ -139,7 +139,7 @@ def getCombinationGrids(grid):
         combin_grids.append(grid.flipVertical())
         grid = grid.rotateClockwise()
     return combin_grids
-
+	
 # Function that translate the list of divided grids based on the given ruleset	
 def translateGrids(rules, list_divided_grids):
     for i in range(len(list_divided_grids)):
@@ -161,7 +161,7 @@ def combineGrids(list_divided_grids):
         for col_splitted in col.split("/"):
             combined_grid[tracker] = ""
             tracker += 1
-            
+
     # Get the gridstrings of each row         
     for col in list_divided_grids:
         tracker = 1
@@ -169,14 +169,14 @@ def combineGrids(list_divided_grids):
             for c_splitted in c.split("/"):
                 combined_grid[tracker] += c_splitted 
                 tracker += 1
-                
+    
+    start = time.time()
     # Return the combined gridstring 
     returning_string = "";
     for cg in range(1, len(combined_grid) + 1):
         returning_string += combined_grid[cg]
         if cg != len(combined_grid):
-            returning_string += "/"
-        
+            returning_string += "/"   
     return returning_string
 
 # Function that takes in the number of iterations and the rule input file and returns the number of lights on in the end image
@@ -193,5 +193,5 @@ def runIterations(num_iterations, input_file):
         
     # Return the number of lights on in the grid
     return start_grid.getNumOn()    
-        
-print "Number of lights on after 5 iterations = ", runIterations(5, "Star41_input.txt")
+            
+print "Number of lights on after 18 iterations = ", runIterations(18, "Star41_input.txt")
