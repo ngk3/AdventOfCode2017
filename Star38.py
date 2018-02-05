@@ -68,15 +68,16 @@ def move(coord, direction, map):
 
 # Function that runs the packet through the routing diagram and returns the letters visited after completion    
 def runPath(map, start):
-    # Tracks the letters visited and order
-    letters_visited = ""
-    
     # Track the current coordinates, begin the direction going South
     coord = start
     direction = "S"
     
+    # Tracks the steps taken
+    count = 0
+    
     # Continue until there are no more possible moves
     while True:
+        count += 1
         # See if the packet can continue in the same direction 
         if checkMovingForward(map, coord, direction):
             coord = move(coord, direction, map)
@@ -91,12 +92,8 @@ def runPath(map, start):
                 coord = possible_moves[dir]
                 direction = dir
                 break
-        
-        # Add to the list of visited letters if valid         
-        if map[coord[0]][coord[1]].isalpha():
-            letters_visited += map[coord[0]][coord[1]]
-    return letters_visited
+    return count
 			
 map, start = build_map("star37_input.txt")
-letters = runPath(map, start)
-print "Letters seen by packet in order = ", letters
+numSteps = runPath(map, start)
+print "Number of steps taken by the packet = ", numSteps
