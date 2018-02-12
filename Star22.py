@@ -1,9 +1,10 @@
 
-# Function that reads the file and get the end coordinates of the child
-def readFileAndGetEndDestination(file_name):
+# Function that reads the file and get the max distance of the child
+def readFileAndGetMaxDestination(file_name):
     x = 0
     y = 0
     z = 0
+    max = 0
     for l in open(file_name, "r").readline().split(","):
         if l == "n":
             y += 1
@@ -23,8 +24,8 @@ def readFileAndGetEndDestination(file_name):
         elif l == "sw":
             x -= 1
             z += 1
-    return [x, y, z]
+        if ((abs(x) + abs(y) + abs(z)) / 2) > max:
+            max = (abs(x) + abs(y) + abs(z)) / 2
+    return max
         
-# Actual distance to get to the child is (|x| + |y| + |z|) / 2
-end_coords = readFileAndGetEndDestination("star21_input.txt")
-print "Number of steps needed to reach child = ", (abs(end_coords[0]) + abs(end_coords[1]) + abs(end_coords[2])) / 2
+print "Furthest away the child is in steps = ", readFileAndGetMaxDestination("star21_input.txt")
