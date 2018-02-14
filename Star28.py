@@ -35,7 +35,7 @@ def knot_hash(lengths):
                     complete_list[reversing[i]] = temp
             
             current_index += l + skip_size
-            # Decrease current_index as necessary
+            # Decease current_index as necessary
             while current_index > 255:
                 current_index -= 256
             skip_size += 1
@@ -91,18 +91,58 @@ def getAllrows():
         bit_rows.append(to_hex(get_dense_hash(knot_hash(arh))))
     return bit_rows
 
-# Function that calculates the number of used squares in the binary representative of each hash    
-def getUsedSquares(bit_rows):
-    count = 0
+# Function that gets all the used square coordinates 
+def getUsedSquareCoordinates(bit_rows):
+    bin_coord = []
     # Go through each hash
     for br in bit_rows:
+        add_bin_coord = ""
         # Go through each character
         for b in br:
-            # Get the binary representative and go through each digit
-            bin_rep = bin(int(b, 16))
-            for bin_r in bin_rep:
-                if bin_r == '1':
-                    count += 1
-    return count
+            # Get the binary representative
+            bin_rep = bin(int(b, 16)).replace("0b", "")
+            while len(bin_rep) < 4:
+                bin_rep = "0" + bin_rep
+            add_bin_coord += bin_rep
+        bin_coord.append(add_bin_coord)
     
-print "Number of used squares = ", getUsedSquares(getAllrows())
+    # Get all the coordinates that are 1 
+    coordinates = []
+    for row in range(128):
+        for col in range(128):
+            if bin_coord[row][col] == "1":
+                coordinates.append(str(row) + "," + str(col))
+
+    return coordinates
+
+# Function that gets the number of regions that the map has
+def getNumRegions(coordinates):
+    # Essentially perform a bfs with each group and remove from coordinates until all group has been found
+    num_groups = 0
+    queue = []
+    while len(coordinates) > 0:
+        queue.append(coordinates[0])
+        while len(queue) > 0:
+            popped = queue.pop(0)
+            if popped in coordinates:
+                coordinates.remove(popped)
+            else:
+                continue
+            
+            popped_splitted = popped.split(",")
+            popped_x = int(popped_splitted[0])
+            popped_y = int(popped_splitted[1])
+            if (str(popped_x + 1) + "," + str(popped_y))in coordinates:
+                queue.append((str(popped_x + 1) + "," + str(popped_y)))
+            if (str(popped_x - 1) + "," + str(popped_y))in coordinates:
+                queue.append((str(popped_x - 1) + "," + str(popped_y)))
+                
+            if (str(popped_x) + "," + str(popped_y + 1))in coordinates:
+                queue.append((str(popped_x) + "," + str(popped_y + 1)))
+            if (str(popped_x) + "," + str(popped_y - 1))in coordinates:
+                queue.append((str(popped_x) + "," + str(popped_y - 1)))
+        num_groups += 1
+    return num_groups
+    
+usedSquareCoordinates = getUsedSquareCoordinates(getAllrows())
+print "Number of regions = ", getNumRegions(usedSquareCoordinates)

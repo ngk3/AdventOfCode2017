@@ -1,3 +1,5 @@
+
+# Class that stores each state and the indicated procedure for the 0 and 1 state
 class State:
 	def __init__(self, s_name, s_state_0, s_state_1):
 		self.name = s_name
@@ -9,7 +11,8 @@ class State:
 				
 	def getOneState(self):
 		return self.state_1
-	
+
+# Function that reads the file and gets the states         
 def readFileAndGetInfo(file_name):
     begin_state = ""
     checksum = 0
@@ -52,7 +55,7 @@ def readFileAndGetInfo(file_name):
             states[state] = State(state, state_0, state_1)
     return begin_state, checksum, states
 		
-	
+# Function that runs the Turing Machine and return the diagnostic checksum
 def runTuringMachine(file_name):
     state_tracker, checksum, states = readFileAndGetInfo(file_name)
     tracker = checksum
@@ -62,11 +65,14 @@ def runTuringMachine(file_name):
     count_itr = 0
     count_ones = 0
 	
+    # Run until the indicated number of steps
     while count_itr < checksum:
-        if count_itr % 1000000 == 0:
-            print count_itr
-        if tracker not in tape.keys():
+        # Set the tape accordingly
+        try:
+            temp = tape[tracker]
+        except:
             tape[tracker] = 0
+            
         if tape[tracker] == 0:
             execution = states[state_tracker].getZeroState()
             if execution[0] == 1:
